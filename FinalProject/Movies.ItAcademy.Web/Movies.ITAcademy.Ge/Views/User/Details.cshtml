@@ -1,0 +1,361 @@
+﻿@model MovieDetailsViewModel
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@Model.Tittle</h1>
+@using System.Text
+@using MovieManagement.Domain.Enums
+@using MovieManagement.Domain.Enums.TicketEnums
+@using Microsoft.AspNetCore.Identity
+@using MovieManagement.Domain.POCO
+@using Movies.ITAcademy.Ge.Services.Abstractions
+@using Microsoft.AspNetCore.Mvc;
+@using System.Security.Claims
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@inject IMvcUserService _mvcUserService
+
+
+@{
+    StringBuilder sb=new StringBuilder();
+    sb.Append($"{@Model.DurationInMinutes / 60}h {@Model.DurationInMinutes % 60}m");
+    sb.ToString();
+    double percent = @Double.Parse(Model.IMDB.Replace('.',',')) * 10;
+    string tktstatus;
+    string movieStatus=await _mvcUserService.GetMovieSatus(@Model.Id);
+    string userId = null;
+    if (SignInManager.IsSignedIn(User))//tu daloginebulia aigos aidi
+    {
+        //User.Identity.Name
+        userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        tktstatus = await _mvcUserService.GetTicketStatus(userId, @Model.Id);
+    }
+    else
+    {
+        userId=ViewBag.UserId;
+        tktstatus=ViewBag.tktStatus;
+    }
+}
+
+<div class="wrapper">
+  <div class="main_card">
+      <div class="card_right">
+      <div class="img_container">
+        <img src="@Model.URL" alt="">
+        </div>
+        <div class="play_btn">
+          <a href="https://www.imdb.com/title/tt4912910/" target="_blank">
+            <i class="fas fa-play-circle"></i>
+          </a>
+        </div>
+      </div>
+    <div class="card_left">
+      <div class="card_datails">
+        <h1>@Model.Tittle</h1>
+        <div class="card_cat">
+          <p class="PG">@Model.Country</p>
+          <p class="year">@Model.ReleaseYear</p>
+          <p class="PG">@Model.Genre</p>
+          <p class="time">@sb</p>
+        </div>
+        <p class="disc">@Model.Details</p>
+        <a href="https://www.imdb.com/title/tt4912910/" target="_blank">Read More</a>
+      <div class="social-btn">
+        <!-- WATCH TRAILER-->
+       
+        <!-- GET-->
+                    @{
+                        
+                        switch (tktstatus)
+                        {
+                            case TKTStatuses.Booked:
+                                {
+                            <form asp-controller="User", asp-action="CancelTicket" method="post">
+                                     @Html.AntiForgeryToken()
+                                     <input name="MovieId", type="hidden"value="@Model.Id">
+                                    <button type="submit" >Cancel Ticket
+                                    </button>
+                            </form>
+                            <form asp-controller="User", asp-action="BuyTicket" method="post">
+                                     @Html.AntiForgeryToken()
+                                     <input name="movieId", type="hidden"value="@Model.Id">
+                                    <button type="submit">Buy Ticket
+                                    </button>
+                                    </form>
+                                } break;
+                            case TKTStatuses.Purchased:
+                                break;
+                            default:
+                                {
+                                    if (movieStatus != Statuses.Ongoing)
+                                    {
+                                        if (movieStatus != Statuses.Starting)
+                                            {
+                                        <form asp-controller="User", asp-action="BookTicket" method="post">
+                                            @Html.AntiForgeryToken()
+                                     <input name="movieId", type="hidden"value="@Model.Id">
+                                    <button type="submit">Book Ticket
+                                    </button>
+                                        </form>
+                                    }
+                                   
+                            <form asp-controller="User", asp-action="BuyTicket" method="post">
+                                     @Html.AntiForgeryToken()
+                                     <input name="movieId", type="hidden"value="@Model.Id">
+                                    <button type="submit">Buy Ticket
+                                    </button>
+                            </form>
+                                    }
+                                    }
+                                
+                                break;
+                        }
+
+        }
+        <div class="customclass">Rating-@percent%</div>
+        <!--USERS RATINGS-->
+     
+        <!--BOOKMARK-->
+      </div>  
+      </div>
+      <div class="times">
+    <div class="starttime">Starts at: @Model.StartTime
+    </div>
+    <div class="endtime">Ends at: @Model.EndTime
+    </div>
+    </div>
+    </div>
+    </div>
+    
+  </div>
+
+
+  <style>
+  body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+.wrapper{
+    border-radius:8px;
+}
+.times{
+    /*margin-top:-45px;*/
+    margin-top:18px;
+    display:flex;
+    /*margin-left:180px;*/
+    /*margin-right:160px;*/
+    width:760px;
+    max-width:760px;
+}
+.starttime{
+  display: flex;
+  float:left;
+  padding:15px;
+    width:380px;
+     width: 50%; 
+    height:70px;
+     max-height:70px;
+     min-height:70px;
+   font-size:22px;
+   font-weight: bold;
+    font-family: roboto,sans-serif;
+    text-align:center;
+
+}
+
+.endtime{
+
+  padding:15px;
+  display: flex;
+  float:right;
+  width: 50%; 
+  float:right;
+   width:380px;
+   height:70px;
+   max-height:70px;
+   min-height:70px;
+   font-size:22px;
+   font-weight: bold;
+   font-family: roboto,sans-serif;
+   text-align:center;
+}
+
+
+.main_card {
+  color: #fff;
+  width: 100%;
+  height: 500px;
+  margin-top: 50px ;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  border-radius:30px;
+  background: #00C9FF; 
+  background: -webkit-linear-gradient(to right, #92FE9D, #00C9FF);
+  background: -webkit-gradient(linear, left top, right top, from(#92FE9D), to(#00C9FF));
+  background: -webkit-linear-gradient(left, #92FE9D, #00C9FF);
+  background: -o-linear-gradient(left, #92FE9D, #00C9FF);
+  /*background: linear-gradient(to left, #92FE9D, #00C9FF);*/
+  /*background:linear-gradient( 109.6deg, rgba(156,252,248,1) 11.2%, rgb(41 59 241) 91.1% );*/
+  -webkit-box-shadow: 0 0 40px rgba(0,0,0,0.3); 
+          box-shadow: 0 0 40px rgba(0,0,0,0.7);
+
+}
+
+.customclass{
+    color: white;
+    padding: 7px;
+    font-weight: bold;
+    font-family: roboto,sans-serif;
+    font-size: 20px;
+    display: flex;
+    margin-top: 42px;
+    margin-left: 70px;
+}
+
+.card_left {
+  width: 70%;
+}
+
+.card_datails {
+  width: 100%;
+  padding-left:15px;
+  padding-top: 45px;
+  margin-top: -25px;
+}
+.card_datails  h1 {
+  font-size: 30px;
+}
+.card_right img {
+  height: 500px;
+  max-width: 350px;
+  border-radius: 4px;
+}
+
+.card_cat {
+    width: 90%;
+    margin-top:10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.PG, .year, .genre, .time {
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+  margin-bottom:0rem;
+  font-family: roboto,sans-serif;
+  font-size: 20px;
+  border-radius: 15px;
+}
+
+.PG {
+  background: #00000091;
+  -webkit-box-shadow: 0 0 50px rgba(0,0,0,0.1);
+          box-shadow: 0 0 50px rgba(0,0,0,0.1);
+  -webkit-transition: 300ms ease-in-out;
+}
+
+.disc {
+  font-weight: 100;
+  line-height: 27px;
+  margin-top:2rem;
+  margin-right:1rem;
+  font-size:x-large;
+}
+a {
+  color: darkcyan;
+  display: block;
+  text-decoration: none;
+}
+.social-btn {
+  margin-top: 20px;
+  margin-left: 10px;
+  display:flex;
+}
+button {
+  color: #fff;
+  border: none;
+  padding: 20px;
+  outline: none;
+  font-size: 20px;
+  margin-top: 30px;
+  margin-left: 35px;
+  background: #92FE9D;
+  border-radius: 12px;
+  -webkit-box-shadow: 0 0 20px rgba(0,0,0,0.2);
+          box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  -webkit-transition: 300ms ease-in-out;
+  -o-transition: 200ms ease-in-out;
+  transition: 200ms ease-in-out;
+}
+
+button:hover {
+  -webkit-transform: scale(1.1);
+      -ms-transform: scale(1.1);
+          transform: scale(1.1);
+}
+
+.fa-play-circle {
+  color: #255;
+  font-size: 160px;
+  margin-top: 110px;
+  -webkit-animation: bounce 1.0s -0.4s infinite;
+          animation: bounce 1.0s -0.4s infinite;
+}
+
+.fa-play-circle:hover {
+  color: aqua;
+  animation: bounce 0.4s infinite;
+}
+/*@@-webkit-keyframes bounce {
+  8% {
+    transform: scale(0.3);
+    -webkit-transform: scale(0.8);
+    opacity: 1;
+  }
+  10% {
+    transform: scale(1.8);
+    -webkit-transform: scale2);
+    opacity: 0;
+    }
+}*/
+
+/*@@keyframes bounce {
+  8% {
+    transform: scale(0.3);
+    -webkit-transform: scale(0.8);
+    opacity: 1;
+  }
+  20% {
+    transform: scale(1.8);
+    -webkit-transform: scale(1.08));
+    opacity: 0;
+    }
+}*/
+
+
+
+
+
+
+@@-webkit-keyframes rotation {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(359deg);
+    }
+}
+</style>
+
+
+

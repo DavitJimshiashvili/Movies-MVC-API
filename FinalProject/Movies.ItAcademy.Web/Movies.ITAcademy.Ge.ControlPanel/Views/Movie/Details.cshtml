@@ -1,0 +1,63 @@
+﻿@using Movies.ITAcademy.Ge.ControlPanel.Models.ViewModels
+@model MovieCardViewModel
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Movie</h4>
+    <hr />
+    <table class="table">
+    <thead>
+        <tr>
+            @foreach(var item in typeof(MovieCardViewModel).GetProperties().Skip(1).SkipLast(2))
+            {
+                <th>
+                    @item.Name
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Tittle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.ReleaseYear)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.Genre)
+            </td>
+             <td>
+                @Html.DisplayFor(modelItem => modelItem.Details)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.IMDB)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.EndTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => modelItem.DurationInMinutes)
+            </td>
+            <td>
+                <img src=@Model.URL width="150" height:auto style="display:block"/>
+            </td>
+            </tr>
+    </tbody>
+</table>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-primary">Back to List</a>
+</div>
+</div>
+
