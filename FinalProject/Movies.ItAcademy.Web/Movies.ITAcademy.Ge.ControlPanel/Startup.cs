@@ -64,7 +64,7 @@ namespace Movies.ITAcademy.Ge.ControlPanel
                  options.Password.RequireDigit = true;
                  options.Password.RequireLowercase = true;
                  options.Password.RequireNonAlphanumeric = false;
-                 options.Password.RequireUppercase = true;
+                 options.Password.RequireUppercase = false;
                  options.SignIn.RequireConfirmedAccount = false;
                  options.SignIn.RequireConfirmedPhoneNumber = false;
                  options.Stores.MaxLengthForKeys = 128;

@@ -1,5 +1,7 @@
 ﻿@using Movies.ITAcademy.Ge.ControlPanel.Models.ViewModels
-@model List<MovieCardViewModel>
+@using X.PagedList.Mvc.Core;
+@*@model List<MovieCardViewModel>*@
+@model X.PagedList.IPagedList<MovieCardViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -58,3 +60,6 @@
 }
     </tbody>
 </table>
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new  {page}))

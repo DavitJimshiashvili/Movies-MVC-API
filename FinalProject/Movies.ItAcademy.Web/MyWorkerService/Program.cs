@@ -33,7 +33,7 @@ public class program
         services.AddScoped<IMovieRepository, MovieRepository>();
         services.AddScoped<IScopedMovieService, ScopedMovieService>();
         services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
-        services.AddDbContext<MovieManagementContext>(options => options.UseSqlServer("Server=DESKTOP-FKMBUF1; Database=ITAcademyMovies; Trusted_Connection=True; MultipleActiveResultSets=true")/*, ServiceLifetime.Scoped*/);
+        services.AddDbContext<MovieManagementContext>(options => options.UseSqlServer($@"Server=(localdb)\MSSQLLocalDB; Database=ITAcademyMovies; Trusted_Connection=True; MultipleActiveResultSets=true")/*, ServiceLifetime.Scoped*/);
         services.AddHostedService<Worker>();
     });
 }

@@ -9,6 +9,7 @@ using Movies.ITAcademy.Ge.ControlPanel.Services.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using X.PagedList;
 
 namespace Movies.ITAcademy.Ge.ControlPanel.Controllers
 {
@@ -23,16 +24,19 @@ namespace Movies.ITAcademy.Ge.ControlPanel.Controllers
 
         //GET: Movie
         [Authorize(Roles =Roles.Moderator)]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page)
         {
+         
             var movies = await _movieService.GetAllAsync();
             if (movies==null)
             {
                 RedirectToAction("Index", "Home");
             }
-            var list = movies.Adapt<List<MovieCardViewModel>>();
-
-            return View(list);
+            var mappedMovies = movies.Adapt<List<MovieCardViewModel>>();
+            var pageNumber = page ?? 1;
+            var OnePageOfMovies = mappedMovies.ToPagedList(pageNumber, 5);
+            
+            return View(OnePageOfMovies);
         }
 
         // GET: Movie/Details/5
@@ -86,7 +90,7 @@ namespace Movies.ITAcademy.Ge.ControlPanel.Controllers
                 return NotFound();
             }
             var movie = await _movieService.GetAsync(id);
-            var mapped = movie.Adapt<MovieUpdateViewModel>();
+            var mapped = movie.Adapt<MovieUpdateModel>();
             return View(mapped);
         }
 
@@ -96,7 +100,7 @@ namespace Movies.ITAcademy.Ge.ControlPanel.Controllers
         [Authorize(Roles = Roles.Moderator)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, MovieUpdateViewModel movie)
+        public async Task<IActionResult> Edit(int id, MovieUpdateModel movie)
         {
             if (id != movie.Id)
             {

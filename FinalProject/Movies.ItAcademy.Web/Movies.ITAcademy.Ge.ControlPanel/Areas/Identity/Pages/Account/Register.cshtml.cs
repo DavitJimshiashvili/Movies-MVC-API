@@ -51,21 +51,21 @@ namespace Movies.ITAcademy.Ge.ControlPanel.Areas.Identity.Pages.Account
             public string Email { get; set; }
 
             [Required]
-            [RegularExpression(@"^[a-zA-Z0-9]{2,30}$")]
+            [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Use letters only please")]
             [StringLength(30, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
-            [Display(Name = "UserName")]
+            [Display(Name = "Username")]
             public string UserName { get; set; }
 
             [Required]
-            [RegularExpression(@"^[a-zA-Z]{2,30}$")]
+            [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Use letters only please")]
             [StringLength(30, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
-            [Display(Name = "FirstName")]
+            [Display(Name = "Firstname")]
             public string FirstName { get; set; }
 
             [Required]
-            [RegularExpression(@"^[a-zA-Z]{2,30}$")]
+            [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Use letters only please")]
             [StringLength(30, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
-            [Display(Name = "LastName")]
+            [Display(Name = "Lastname")]
             public string LastName { get; set; }
 
             [Required]
