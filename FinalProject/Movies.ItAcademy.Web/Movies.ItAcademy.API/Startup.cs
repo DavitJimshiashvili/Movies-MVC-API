@@ -33,55 +33,12 @@ namespace Movies.ItAcademy.API
         {
             services.AddControllers();
             services.AddFluentValidation(conf=> conf.RegisterValidatorsFromAssemblyContaining<Startup>());
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Movies.ITAcademy API",
-                    Version = "v1"
-                });
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Description = "Please insert JWT with Bearer into field - \"Bearer _token_\"",
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        new string[] { }
-                    }
-                });
-            });
-            services.AddIdentity<User, IdentityRole>(options =>
-            {
-                options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = true;
-                options.SignIn.RequireConfirmedAccount = false;
-                options.SignIn.RequireConfirmedPhoneNumber = false;
-                options.SignIn.RequireConfirmedPhoneNumber = false;
-                options.Stores.MaxLengthForKeys = 128;
-
-            })
-                .AddEntityFrameworkStores<MovieManagementContext>()
-                .AddDefaultTokenProviders();
-
-            services.AddServices();
+            services.AddSwagger();
+            services.RegisterIdentityService();
+            services.AddAppServices();
             services.RegisterMaps();
             services.AddTokenAuthentication(Configuration);
-            services.Configure<JWTConfiguration>(Configuration.GetSection(nameof(JWTConfiguration)));
             services.AddDbContext<MovieManagementContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

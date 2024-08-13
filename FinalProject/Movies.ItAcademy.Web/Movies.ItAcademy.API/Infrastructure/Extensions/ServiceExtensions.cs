@@ -6,7 +6,7 @@ namespace Movies.ItAcademy.API.Infrastructure.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void AddServices(this IServiceCollection services)
+        public static void AddAppServices(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IJWTService, JWTService>();
