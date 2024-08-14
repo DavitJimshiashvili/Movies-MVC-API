@@ -1,24 +1,15 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MovieManagement.Data;
 using MovieManagement.Data.EF;
-using MovieManagement.Data.EF.Repositories;
 using MovieManagement.Domain.POCO;
 using MovieManagement.PresistentDB.Context;
+using MovieManagement.PresistentDB.Extensions;
 using Movies.ITAcademy.Ge.ControlPanel.Infrastructure;
-using Movies.ITAcademy.Ge.ControlPanel.Services.Abstractions;
-using Movies.ITAcademy.Ge.ControlPanel.Services.Implementations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Movies.ITAcademy.Ge.ControlPanel.Services.Extensions;
 
 namespace Movies.ITAcademy.Ge.ControlPanel
 {
@@ -34,16 +25,8 @@ namespace Movies.ITAcademy.Ge.ControlPanel
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MovieManagementContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            //services.AddScoped<IMVCUserService, MVCUserService>();
-            services.AddScoped<IMovieRepository, MovieRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ITicketRepository, TicketRepository>();
-            services.AddScoped<IMovieService, MovieService>();
-            services.AddScoped<IUserSevice, UserService>();
-            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddDBContext(Configuration).AddRepository();
+            services.AddAppService();
             //services.Configure<CookiePolicyOptions>(options =>
             //{
             //    // This lambda determines whether user consent for non-essential cookies is needed for a given request.

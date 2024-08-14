@@ -2,20 +2,16 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MovieManagement.Data;
 using MovieManagement.Data.EF;
-using MovieManagement.Data.EF.Repositories;
 using MovieManagement.Domain.POCO;
 using MovieManagement.PresistentDB.Context;
-using Movies.ITAcademy.Ge.Infrastructure.Extensions;
+using MovieManagement.PresistentDB.Extensions;
 using Movies.ITAcademy.Ge.Infrastructure.Mappings;
-using Movies.ITAcademy.Ge.Services.Abstractions;
-using Movies.ITAcademy.Ge.Services.Implementations;
-using System;
+using Movies.ITAcademy.Ge.Services.Extensions;
+
 
 namespace Movies.ITAcademy.Ge
 {
@@ -31,14 +27,9 @@ namespace Movies.ITAcademy.Ge
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<MovieManagementContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<IMvcUserService, MVCUserService>();
-            services.AddScoped<IMovieRepository, MovieRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ITicketRepository, TicketRepository>();
-            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddDBContext(Configuration).AddRepository();
+            services.RegisterMVCService();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

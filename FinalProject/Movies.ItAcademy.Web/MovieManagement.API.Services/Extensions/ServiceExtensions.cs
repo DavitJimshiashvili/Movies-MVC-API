@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MovieManagement.Services.Abstractions;
 using MovieManagement.Services.Implementations;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Movies.ItAcademy.API.Infrastructure.Extensions
+namespace MovieManagement.API.Services.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void AddAppServices(this IServiceCollection services)
+        public static void AddAppService(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IJWTService, JWTService>();
-
-            services.AddRepositories();
-
         }
     }
 }
